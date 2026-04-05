@@ -1,0 +1,13 @@
+{
+  "name": "pavilion",
+  "version": "2.0.0",
+  "description": "IPL 2026 Fantasy League Tracker — with live scores via CricketData API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  }
+}
