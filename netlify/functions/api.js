@@ -1,166 +1,157 @@
-// netlify/functions/api.js -- Pavilion IPL 2026 Fantasy League API
-// Uses require() for JSON data -- Netlify bundles these at build time
+// netlify/functions/api.js
+// Pavilion -- IPL 2026 Fantasy League
+// All data is embedded -- no file system access needed, works on Netlify
 
-const fs   = require("fs");
-const path = require("path");
+// ============================================================
+// EMBEDDED DATA (auto-generated -- do not edit manually)
+// To add a new match: update MATCH_DATA below and redeploy
+// ============================================================
+const PLAYERS = [{"id": 1, "name": "Ravi Bishnoi", "category": "Bowler", "iplTeam": "RR", "foreign": "Indian", "fantasyTeam": "RK", "soldPrice": 0}, {"id": 2, "name": "Rohit Sharma", "category": "Batter", "iplTeam": "MI", "foreign": "Indian", "fantasyTeam": "RK", "soldPrice": 0}, {"id": 3, "name": "Dhruv Jurel", "category": "Wicketkeeper", "iplTeam": "RR", "foreign": "Indian", "fantasyTeam": "RK", "soldPrice": 0}, {"id": 4, "name": "Vaibhav Sooryavanshi", "category": "Batter", "iplTeam": "RR", "foreign": "Indian", "fantasyTeam": "RK", "soldPrice": 0}, {"id": 5, "name": "Mukesh Kumar", "category": "Bowler", "iplTeam": "DC", "foreign": "Indian", "fantasyTeam": "RK", "soldPrice": 0}, {"id": 6, "name": "Sunil Narine", "category": "All-rounder", "iplTeam": "KKR", "foreign": "Overseas", "fantasyTeam": "RK", "soldPrice": 0}, {"id": 7, "name": "Mohammed Siraj", "category": "Bowler", "iplTeam": "GT", "foreign": "Indian", "fantasyTeam": "RK", "soldPrice": 0}, {"id": 8, "name": "Rajat Patidar", "category": "Batter", "iplTeam": "RCB", "foreign": "Indian", "fantasyTeam": "RK", "soldPrice": 0}, {"id": 9, "name": "Tushar Deshpande", "category": "Bowler", "iplTeam": "RR", "foreign": "Indian", "fantasyTeam": "RK", "soldPrice": 0}, {"id": 10, "name": "Nehal Wadhera", "category": "Batter", "iplTeam": "PBKS", "foreign": "Indian", "fantasyTeam": "RK", "soldPrice": 0}, {"id": 11, "name": "Sanju Samson", "category": "Wicketkeeper", "iplTeam": "CSK", "foreign": "Indian", "fantasyTeam": "RK", "soldPrice": 0}, {"id": 12, "name": "AM Ghazanfar", "category": "Bowler", "iplTeam": "MI", "foreign": "Overseas", "fantasyTeam": "RK", "soldPrice": 0}, {"id": 13, "name": "Ashutosh Sharma", "category": "Batter", "iplTeam": "PBKS", "foreign": "Indian", "fantasyTeam": "RK", "soldPrice": 0}, {"id": 14, "name": "Venkatesh Iyer", "category": "All-rounder", "iplTeam": "KKR", "foreign": "Indian", "fantasyTeam": "RK", "soldPrice": 0}, {"id": 15, "name": "Kamindu Mendis", "category": "Batter", "iplTeam": "RCB", "foreign": "Overseas", "fantasyTeam": "RK", "soldPrice": 0}, {"id": 16, "name": "Prasidh Krishna", "category": "Bowler", "iplTeam": "GT", "foreign": "Indian", "fantasyTeam": "Rijo", "soldPrice": 0}, {"id": 17, "name": "Sai Sudharsan", "category": "Batter", "iplTeam": "GT", "foreign": "Indian", "fantasyTeam": "Rijo", "soldPrice": 0}, {"id": 18, "name": "Prabhsimran Singh", "category": "Wicketkeeper", "iplTeam": "PBKS", "foreign": "Indian", "fantasyTeam": "Rijo", "soldPrice": 0}, {"id": 19, "name": "Ajinkya Rahane", "category": "Batter", "iplTeam": "KKR", "foreign": "Indian", "fantasyTeam": "Rijo", "soldPrice": 0}, {"id": 20, "name": "Ayush Mhatre", "category": "Batter", "iplTeam": "CSK", "foreign": "Indian", "fantasyTeam": "Rijo", "soldPrice": 0}, {"id": 21, "name": "Vaibhav Arora", "category": "Bowler", "iplTeam": "KKR", "foreign": "Indian", "fantasyTeam": "Rijo", "soldPrice": 0}, {"id": 22, "name": "Marco Jansen", "category": "All-rounder", "iplTeam": "PBKS", "foreign": "Overseas", "fantasyTeam": "Rijo", "soldPrice": 0}, {"id": 23, "name": "Tilak Varma", "category": "Batter", "iplTeam": "MI", "foreign": "Indian", "fantasyTeam": "Rijo", "soldPrice": 0}, {"id": 24, "name": "Vipraj Nigam", "category": "Bowler", "iplTeam": "DC", "foreign": "Indian", "fantasyTeam": "Rijo", "soldPrice": 0}, {"id": 25, "name": "Shashank Singh", "category": "Batter", "iplTeam": "PBKS", "foreign": "Indian", "fantasyTeam": "Rijo", "soldPrice": 0}, {"id": 26, "name": "Nicholas Pooran", "category": "Wicketkeeper", "iplTeam": "LSG", "foreign": "Overseas", "fantasyTeam": "Rijo", "soldPrice": 0}, {"id": 27, "name": "Ayush Badoni", "category": "Batter", "iplTeam": "LSG", "foreign": "Indian", "fantasyTeam": "Rijo", "soldPrice": 0}, {"id": 28, "name": "Ravisrinivasan Sai Kishore", "category": "Bowler", "iplTeam": "GT", "foreign": "Indian", "fantasyTeam": "Rijo", "soldPrice": 0}, {"id": 29, "name": "Digvesh Singh Rathi", "category": "Bowler", "iplTeam": "DC", "foreign": "Indian", "fantasyTeam": "Rijo", "soldPrice": 0}, {"id": 30, "name": "Zeeshan Ansari", "category": "Bowler", "iplTeam": "GT", "foreign": "Indian", "fantasyTeam": "Rijo", "soldPrice": 0}, {"id": 31, "name": "Ishan Kishan", "category": "Wicketkeeper", "iplTeam": "SRH", "foreign": "Indian", "fantasyTeam": "JD", "soldPrice": 0}, {"id": 32, "name": "Heinrich Klaasen", "category": "Wicketkeeper", "iplTeam": "SRH", "foreign": "Overseas", "fantasyTeam": "JD", "soldPrice": 0}, {"id": 33, "name": "Kagiso Rabada", "category": "Bowler", "iplTeam": "GT", "foreign": "Overseas", "fantasyTeam": "JD", "soldPrice": 0}, {"id": 34, "name": "Devdutt Padikkal", "category": "Batter", "iplTeam": "RCB", "foreign": "Indian", "fantasyTeam": "JD", "soldPrice": 0}, {"id": 35, "name": "Ravindra Jadeja", "category": "All-rounder", "iplTeam": "RR", "foreign": "Indian", "fantasyTeam": "JD", "soldPrice": 0}, {"id": 36, "name": "Pathum Nissanka", "category": "Batter", "iplTeam": "DC", "foreign": "Overseas", "fantasyTeam": "JD", "soldPrice": 0}, {"id": 37, "name": "Jamie Overton", "category": "All-rounder", "iplTeam": "CSK", "foreign": "Overseas", "fantasyTeam": "JD", "soldPrice": 0}, {"id": 38, "name": "Mitchell Marsh", "category": "All-rounder", "iplTeam": "LSG", "foreign": "Overseas", "fantasyTeam": "JD", "soldPrice": 0}, {"id": 39, "name": "Mohammed Shami", "category": "Bowler", "iplTeam": "LSG", "foreign": "Indian", "fantasyTeam": "JD", "soldPrice": 0}, {"id": 40, "name": "Jasprit Bumrah", "category": "Bowler", "iplTeam": "MI", "foreign": "Indian", "fantasyTeam": "JD", "soldPrice": 0}, {"id": 41, "name": "Bhuvneshwar Kumar", "category": "Bowler", "iplTeam": "RCB", "foreign": "Indian", "fantasyTeam": "JD", "soldPrice": 0}, {"id": 42, "name": "Tim David", "category": "Batter", "iplTeam": "RCB", "foreign": "Overseas", "fantasyTeam": "JD", "soldPrice": 0}, {"id": 43, "name": "Rovman Powell", "category": "Batter", "iplTeam": "DC", "foreign": "Overseas", "fantasyTeam": "JD", "soldPrice": 0}, {"id": 44, "name": "Wanindu Hasaranga", "category": "All-rounder", "iplTeam": "RCB", "foreign": "Overseas", "fantasyTeam": "JD", "soldPrice": 0}, {"id": 45, "name": "Akeal Hosein", "category": "Bowler", "iplTeam": "DC", "foreign": "Overseas", "fantasyTeam": "JD", "soldPrice": 0}, {"id": 46, "name": "Blessing Muzarabani", "category": "Bowler", "iplTeam": "KKR", "foreign": "Overseas", "fantasyTeam": "Prakash", "soldPrice": 0}, {"id": 47, "name": "Virat Kohli", "category": "Batter", "iplTeam": "RCB", "foreign": "Indian", "fantasyTeam": "Prakash", "soldPrice": 0}, {"id": 48, "name": "Suryakumar Yadav", "category": "Batter", "iplTeam": "MI", "foreign": "Indian", "fantasyTeam": "Prakash", "soldPrice": 0}, {"id": 49, "name": "Jos Buttler", "category": "Wicketkeeper", "iplTeam": "GT", "foreign": "Overseas", "fantasyTeam": "Prakash", "soldPrice": 0}, {"id": 50, "name": "Sarfaraz Khan", "category": "Batter", "iplTeam": "CSK", "foreign": "Indian", "fantasyTeam": "Prakash", "soldPrice": 0}, {"id": 51, "name": "Abhishek Sharma", "category": "All-rounder", "iplTeam": "SRH", "foreign": "Indian", "fantasyTeam": "Prakash", "soldPrice": 0}, {"id": 52, "name": "Washington Sundar", "category": "All-rounder", "iplTeam": "GT", "foreign": "Indian", "fantasyTeam": "Prakash", "soldPrice": 0}, {"id": 53, "name": "Mitchell Santner", "category": "All-rounder", "iplTeam": "MI", "foreign": "Overseas", "fantasyTeam": "Prakash", "soldPrice": 0}, {"id": 54, "name": "Ruturaj Gaikwad", "category": "Batter", "iplTeam": "CSK", "foreign": "Indian", "fantasyTeam": "Prakash", "soldPrice": 0}, {"id": 55, "name": "Glenn Phillips", "category": "All-rounder", "iplTeam": "GT", "foreign": "Overseas", "fantasyTeam": "Prakash", "soldPrice": 0}, {"id": 56, "name": "Khaleel Ahmed", "category": "Bowler", "iplTeam": "CSK", "foreign": "Indian", "fantasyTeam": "Prakash", "soldPrice": 0}, {"id": 57, "name": "Prashant Veer", "category": "Bowler", "iplTeam": "CSK", "foreign": "Indian", "fantasyTeam": "Prakash", "soldPrice": 0}, {"id": 58, "name": "Jitesh Sharma", "category": "Wicketkeeper", "iplTeam": "RCB", "foreign": "Indian", "fantasyTeam": "Prakash", "soldPrice": 0}, {"id": 59, "name": "Harpreet Brar", "category": "All-rounder", "iplTeam": "PBKS", "foreign": "Indian", "fantasyTeam": "Prakash", "soldPrice": 0}, {"id": 60, "name": "Rasikh Salam Dar", "category": "Bowler", "iplTeam": "MI", "foreign": "Indian", "fantasyTeam": "Prakash", "soldPrice": 0}, {"id": 61, "name": "Yashasvi Jaiswal", "category": "Batter", "iplTeam": "RR", "foreign": "Indian", "fantasyTeam": "Darshan", "soldPrice": 0}, {"id": 62, "name": "T Natarajan", "category": "Bowler", "iplTeam": "DC", "foreign": "Indian", "fantasyTeam": "Darshan", "soldPrice": 0}, {"id": 63, "name": "Priyansh Arya", "category": "Batter", "iplTeam": "PBKS", "foreign": "Indian", "fantasyTeam": "Darshan", "soldPrice": 0}, {"id": 64, "name": "Finn Allen", "category": "Batter", "iplTeam": "KKR", "foreign": "Overseas", "fantasyTeam": "Darshan", "soldPrice": 0}, {"id": 65, "name": "Rashid Khan", "category": "All-rounder", "iplTeam": "GT", "foreign": "Overseas", "fantasyTeam": "Darshan", "soldPrice": 0}, {"id": 66, "name": "Tristan Stubbs", "category": "Batter", "iplTeam": "DC", "foreign": "Overseas", "fantasyTeam": "Darshan", "soldPrice": 0}, {"id": 67, "name": "Riyan Parag", "category": "All-rounder", "iplTeam": "RR", "foreign": "Indian", "fantasyTeam": "Darshan", "soldPrice": 0}, {"id": 68, "name": "Naman Dhir", "category": "Batter", "iplTeam": "MI", "foreign": "Indian", "fantasyTeam": "Darshan", "soldPrice": 0}, {"id": 69, "name": "Arshdeep Singh", "category": "Bowler", "iplTeam": "PBKS", "foreign": "Indian", "fantasyTeam": "Darshan", "soldPrice": 0}, {"id": 70, "name": "Rishabh Pant", "category": "Wicketkeeper", "iplTeam": "LSG", "foreign": "Indian", "fantasyTeam": "Darshan", "soldPrice": 0}, {"id": 71, "name": "Harshal Patel", "category": "Bowler", "iplTeam": "SRH", "foreign": "Indian", "fantasyTeam": "Darshan", "soldPrice": 0}, {"id": 72, "name": "Mitchell Starc", "category": "Bowler", "iplTeam": "DC", "foreign": "Overseas", "fantasyTeam": "Darshan", "soldPrice": 0}, {"id": 73, "name": "Josh Hazlewood", "category": "Bowler", "iplTeam": "RCB", "foreign": "Overseas", "fantasyTeam": "Darshan", "soldPrice": 0}, {"id": 74, "name": "Jacob Bethell", "category": "All-rounder", "iplTeam": "RCB", "foreign": "Overseas", "fantasyTeam": "Darshan", "soldPrice": 0}, {"id": 75, "name": "Liam Livingstone", "category": "All-rounder", "iplTeam": "PBKS", "foreign": "Overseas", "fantasyTeam": "Darshan", "soldPrice": 0}, {"id": 76, "name": "Angkrish Raghuvanshi", "category": "Batter", "iplTeam": "KKR", "foreign": "Indian", "fantasyTeam": "Dots", "soldPrice": 0}, {"id": 77, "name": "Shardul Thakur", "category": "All-rounder", "iplTeam": "MI", "foreign": "Indian", "fantasyTeam": "Dots", "soldPrice": 0}, {"id": 78, "name": "Jofra Archer", "category": "Bowler", "iplTeam": "RR", "foreign": "Overseas", "fantasyTeam": "Dots", "soldPrice": 0}, {"id": 79, "name": "Matt Henry", "category": "Bowler", "iplTeam": "CSK", "foreign": "Overseas", "fantasyTeam": "Dots", "soldPrice": 0}, {"id": 80, "name": "Axar Patel", "category": "All-rounder", "iplTeam": "DC", "foreign": "Indian", "fantasyTeam": "Dots", "soldPrice": 0}, {"id": 81, "name": "Aniket Verma", "category": "Batter", "iplTeam": "SRH", "foreign": "Indian", "fantasyTeam": "Dots", "soldPrice": 0}, {"id": 82, "name": "Hardik Pandya", "category": "All-rounder", "iplTeam": "MI", "foreign": "Indian", "fantasyTeam": "Dots", "soldPrice": 0}, {"id": 83, "name": "Noor Ahmad", "category": "Bowler", "iplTeam": "CSK", "foreign": "Overseas", "fantasyTeam": "Dots", "soldPrice": 0}, {"id": 84, "name": "Aiden Markram", "category": "All-rounder", "iplTeam": "LSG", "foreign": "Overseas", "fantasyTeam": "Dots", "soldPrice": 0}, {"id": 85, "name": "Dewald Brevis", "category": "Batter", "iplTeam": "MI", "foreign": "Overseas", "fantasyTeam": "Dots", "soldPrice": 0}, {"id": 86, "name": "Pat Cummins", "category": "All-rounder", "iplTeam": "SRH", "foreign": "Overseas", "fantasyTeam": "Dots", "soldPrice": 0}, {"id": 87, "name": "Abishek Porel", "category": "Wicketkeeper", "iplTeam": "DC", "foreign": "Indian", "fantasyTeam": "Dots", "soldPrice": 0}, {"id": 88, "name": "Avesh Khan", "category": "Bowler", "iplTeam": "LSG", "foreign": "Indian", "fantasyTeam": "Dots", "soldPrice": 0}, {"id": 89, "name": "Urvil Patel", "category": "Wicketkeeper", "iplTeam": "GT", "foreign": "Indian", "fantasyTeam": "Dots", "soldPrice": 0}, {"id": 90, "name": "Auqib Nabi Dar", "category": "Bowler", "iplTeam": "SRH", "foreign": "Indian", "fantasyTeam": "Dots", "soldPrice": 0}, {"id": 91, "name": "Lungi Ngidi", "category": "Bowler", "iplTeam": "DC", "foreign": "Overseas", "fantasyTeam": "Ragu", "soldPrice": 0}, {"id": 92, "name": "Rinku Singh", "category": "Batter", "iplTeam": "KKR", "foreign": "Indian", "fantasyTeam": "Ragu", "soldPrice": 0}, {"id": 93, "name": "Travis Head", "category": "Batter", "iplTeam": "SRH", "foreign": "Overseas", "fantasyTeam": "Ragu", "soldPrice": 0}, {"id": 94, "name": "Shubman Gill", "category": "Batter", "iplTeam": "GT", "foreign": "Indian", "fantasyTeam": "Ragu", "soldPrice": 0}, {"id": 95, "name": "Mohsin Khan", "category": "Bowler", "iplTeam": "LSG", "foreign": "Indian", "fantasyTeam": "Ragu", "soldPrice": 0}, {"id": 96, "name": "Shimron Hetmyer", "category": "Batter", "iplTeam": "RR", "foreign": "Overseas", "fantasyTeam": "Ragu", "soldPrice": 0}, {"id": 97, "name": "Sandeep Sharma", "category": "Bowler", "iplTeam": "RR", "foreign": "Indian", "fantasyTeam": "Ragu", "soldPrice": 0}, {"id": 98, "name": "Cameron Green", "category": "All-rounder", "iplTeam": "KKR", "foreign": "Overseas", "fantasyTeam": "Ragu", "soldPrice": 0}, {"id": 99, "name": "Deepak Chahar", "category": "Bowler", "iplTeam": "MI", "foreign": "Indian", "fantasyTeam": "Ragu", "soldPrice": 0}, {"id": 100, "name": "Suyash Sharma", "category": "Bowler", "iplTeam": "RCB", "foreign": "Indian", "fantasyTeam": "Ragu", "soldPrice": 0}, {"id": 101, "name": "Philip Salt", "category": "Wicketkeeper", "iplTeam": "RCB", "foreign": "Overseas", "fantasyTeam": "Ragu", "soldPrice": 0}, {"id": 102, "name": "Marcus Stoinis", "category": "All-rounder", "iplTeam": "PBKS", "foreign": "Overseas", "fantasyTeam": "Ragu", "soldPrice": 0}, {"id": 103, "name": "Krunal Pandya", "category": "All-rounder", "iplTeam": "RCB", "foreign": "Indian", "fantasyTeam": "Ragu", "soldPrice": 0}, {"id": 104, "name": "Quinton de Kock", "category": "Wicketkeeper", "iplTeam": "LSG", "foreign": "Overseas", "fantasyTeam": "Ragu", "soldPrice": 0}, {"id": 105, "name": "Will Jacks", "category": "All-rounder", "iplTeam": "RCB", "foreign": "Overseas", "fantasyTeam": "Ragu", "soldPrice": 0}, {"id": 106, "name": "Shreyas Iyer", "category": "Batter", "iplTeam": "PBKS", "foreign": "Indian", "fantasyTeam": "Prabhu", "soldPrice": 0}, {"id": 107, "name": "Yuzvendra Chahal", "category": "Bowler", "iplTeam": "PBKS", "foreign": "Indian", "fantasyTeam": "Prabhu", "soldPrice": 0}, {"id": 108, "name": "Kuldeep Yadav", "category": "Bowler", "iplTeam": "DC", "foreign": "Indian", "fantasyTeam": "Prabhu", "soldPrice": 0}, {"id": 109, "name": "Shivam Dube", "category": "All-rounder", "iplTeam": "CSK", "foreign": "Indian", "fantasyTeam": "Prabhu", "soldPrice": 0}, {"id": 110, "name": "Xavier Bartlett", "category": "Bowler", "iplTeam": "PBKS", "foreign": "Overseas", "fantasyTeam": "Prabhu", "soldPrice": 0}, {"id": 111, "name": "Abdul Samad", "category": "Batter", "iplTeam": "LSG", "foreign": "Indian", "fantasyTeam": "Prabhu", "soldPrice": 0}, {"id": 112, "name": "David Miller", "category": "Batter", "iplTeam": "DC", "foreign": "Overseas", "fantasyTeam": "Prabhu", "soldPrice": 0}, {"id": 113, "name": "Ramandeep Singh", "category": "All-rounder", "iplTeam": "KKR", "foreign": "Indian", "fantasyTeam": "Prabhu", "soldPrice": 0}, {"id": 114, "name": "Varun Chakravarthy", "category": "Bowler", "iplTeam": "KKR", "foreign": "Indian", "fantasyTeam": "Prabhu", "soldPrice": 0}, {"id": 115, "name": "Shahbaz Ahmed", "category": "All-rounder", "iplTeam": "LSG", "foreign": "Indian", "fantasyTeam": "Prabhu", "soldPrice": 0}, {"id": 116, "name": "KL Rahul", "category": "Wicketkeeper", "iplTeam": "DC", "foreign": "Indian", "fantasyTeam": "Prabhu", "soldPrice": 0}, {"id": 117, "name": "Trent Boult", "category": "Bowler", "iplTeam": "MI", "foreign": "Overseas", "fantasyTeam": "Prabhu", "soldPrice": 0}, {"id": 118, "name": "Tim Seifert", "category": "Wicketkeeper", "iplTeam": "KKR", "foreign": "Overseas", "fantasyTeam": "Prabhu", "soldPrice": 0}, {"id": 119, "name": "Karun Nair", "category": "Batter", "iplTeam": "PBKS", "foreign": "Indian", "fantasyTeam": "Prabhu", "soldPrice": 0}, {"id": 120, "name": "Ben Duckett", "category": "Batter", "iplTeam": "MI", "foreign": "Overseas", "fantasyTeam": "Prabhu", "soldPrice": 0}];
 
-// require() is bundled correctly by Netlify -- no path issues
-const PLAYERS = require("../../data/players-cache.json");
-const CONFIG  = require("../../data/config.json");
+const MATCH_DATA = [{"id": "match-1", "title": "SRH vs RCB - Match 1", "date": "2026-03-28", "abandoned": false, "rows": [{"id": 31, "name": "Ishan Kishan", "ipl_team": "SRH", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 80, "fours": 8, "sixes": 5, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 32, "name": "Heinrich Klaasen", "ipl_team": "SRH", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 31, "fours": 2, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 93, "name": "Travis Head", "ipl_team": "SRH", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 11, "fours": 2, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 51, "name": "Abhishek Sharma", "ipl_team": "SRH", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 7, "fours": 0, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 81, "name": "Aniket Verma", "ipl_team": "SRH", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 43, "fours": 3, "sixes": 4, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 71, "name": "Harshal Patel", "ipl_team": "SRH", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 3, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 86, "name": "Pat Cummins", "ipl_team": "SRH", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 34, "name": "Devdutt Padikkal", "ipl_team": "RCB", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 61, "fours": 7, "sixes": 4, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 3, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 47, "name": "Virat Kohli", "ipl_team": "RCB", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 69, "fours": 5, "sixes": 5, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 8, "name": "Rajat Patidar", "ipl_team": "RCB", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 31, "fours": 2, "sixes": 3, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 42, "name": "Tim David", "ipl_team": "RCB", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 16, "fours": 1, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 103, "name": "Krunal Pandya", "ipl_team": "RCB", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 1, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 100, "name": "Suyash Sharma", "ipl_team": "RCB", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 2, "dots": 6, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 41, "name": "Bhuvneshwar Kumar", "ipl_team": "RCB", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 9, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 101, "name": "Philip Salt", "ipl_team": "RCB", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 8, "fours": 2, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 3, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 58, "name": "Jitesh Sharma", "ipl_team": "RCB", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}]}, {"id": "match-2", "title": "KKR vs MI - Match 2", "date": "2026-03-29", "abandoned": false, "rows": [{"id": 19, "name": "Ajinkya Rahane", "ipl_team": "KKR", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 67, "fours": 3, "sixes": 5, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 76, "name": "Angkrish Raghuvanshi", "ipl_team": "KKR", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 51, "fours": 6, "sixes": 2, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 64, "name": "Finn Allen", "ipl_team": "KKR", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 37, "fours": 6, "sixes": 2, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 6, "name": "Sunil Narine", "ipl_team": "KKR", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 12, "fours": 0, "sixes": 2, "wkts": 1, "dots": 6, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 21, "name": "Vaibhav Arora", "ipl_team": "KKR", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 8, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 46, "name": "Blessing Muzarabani", "ipl_team": "KKR", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 6, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 98, "name": "Cameron Green", "ipl_team": "KKR", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 18, "fours": 1, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 92, "name": "Rinku Singh", "ipl_team": "KKR", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 33, "fours": 4, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 113, "name": "Ramandeep Singh", "ipl_team": "KKR", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 4, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 114, "name": "Varun Chakravarthy", "ipl_team": "KKR", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 5, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 2, "name": "Rohit Sharma", "ipl_team": "MI", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 78, "fours": 6, "sixes": 6, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 48, "name": "Suryakumar Yadav", "ipl_team": "MI", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 16, "fours": 3, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 82, "name": "Hardik Pandya", "ipl_team": "MI", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 18, "fours": 3, "sixes": 0, "wkts": 1, "dots": 7, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 77, "name": "Shardul Thakur", "ipl_team": "MI", "fantasy_team": "Dots", "playing": 1, "mom": 1, "runs": 0, "fours": 0, "sixes": 0, "wkts": 3, "dots": 7, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 40, "name": "Jasprit Bumrah", "ipl_team": "MI", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 4, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 23, "name": "Tilak Varma", "ipl_team": "MI", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 20, "fours": 4, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 68, "name": "Naman Dhir", "ipl_team": "MI", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 5, "fours": 1, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 117, "name": "Trent Boult", "ipl_team": "MI", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 7, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 12, "name": "AM Ghazanfar", "ipl_team": "MI", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 6, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}]}, {"id": "match-3", "title": "CSK vs RR - Match 3", "date": "2026-03-30", "abandoned": false, "rows": [{"id": 20, "name": "Ayush Mhatre", "ipl_team": "CSK", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 54, "name": "Ruturaj Gaikwad", "ipl_team": "CSK", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 6, "fours": 1, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 1, "stumpings": 0}, {"id": 50, "name": "Sarfaraz Khan", "ipl_team": "CSK", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 17, "fours": 2, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 37, "name": "Jamie Overton", "ipl_team": "CSK", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 43, "fours": 2, "sixes": 2, "wkts": 0, "dots": 1, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 109, "name": "Shivam Dube", "ipl_team": "CSK", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 6, "fours": 0, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 11, "name": "Sanju Samson", "ipl_team": "CSK", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 6, "fours": 1, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 83, "name": "Noor Ahmad", "ipl_team": "CSK", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 1, "fours": 0, "sixes": 0, "wkts": 0, "dots": 4, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 56, "name": "Khaleel Ahmed", "ipl_team": "CSK", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 10, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 79, "name": "Matt Henry", "ipl_team": "CSK", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 5, "fours": 1, "sixes": 0, "wkts": 0, "dots": 2, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 4, "name": "Vaibhav Sooryavanshi", "ipl_team": "RR", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 52, "fours": 4, "sixes": 5, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 61, "name": "Yashasvi Jaiswal", "ipl_team": "RR", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 38, "fours": 3, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 35, "name": "Ravindra Jadeja", "ipl_team": "RR", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 7, "fours": 1, "sixes": 0, "wkts": 2, "dots": 11, "maidens": 0, "lbw_b_hw": 2, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 1, "name": "Ravi Bishnoi", "ipl_team": "RR", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 8, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 3, "name": "Dhruv Jurel", "ipl_team": "RR", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 18, "fours": 4, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 1, "stumpings": 0}, {"id": 67, "name": "Riyan Parag", "ipl_team": "RR", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 14, "fours": 1, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 78, "name": "Jofra Archer", "ipl_team": "RR", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 1, "fours": 0, "sixes": 0, "wkts": 2, "dots": 17, "maidens": 0, "lbw_b_hw": 1, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 97, "name": "Sandeep Sharma", "ipl_team": "RR", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 3, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 96, "name": "Shimron Hetmyer", "ipl_team": "RR", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 1, "stumpings": 0}, {"id": 9, "name": "Tushar Deshpande", "ipl_team": "RR", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 7, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}]}, {"id": "match-4", "title": "GT vs PBKS - Match 4", "date": "2026-03-31", "abandoned": false, "rows": [{"id": 94, "name": "Shubman Gill", "ipl_team": "GT", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 39, "fours": 6, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 49, "name": "Jos Buttler", "ipl_team": "GT", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 38, "fours": 3, "sixes": 2, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 17, "name": "Sai Sudharsan", "ipl_team": "GT", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 13, "fours": 2, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 52, "name": "Washington Sundar", "ipl_team": "GT", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 18, "fours": 2, "sixes": 0, "wkts": 1, "dots": 6, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 55, "name": "Glenn Phillips", "ipl_team": "GT", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 25, "fours": 1, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 65, "name": "Rashid Khan", "ipl_team": "GT", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 10, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 33, "name": "Kagiso Rabada", "ipl_team": "GT", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 7, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 16, "name": "Prasidh Krishna", "ipl_team": "GT", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 3, "dots": 11, "maidens": 0, "lbw_b_hw": 1, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 7, "name": "Mohammed Siraj", "ipl_team": "GT", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 6, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 18, "name": "Prabhsimran Singh", "ipl_team": "PBKS", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 37, "fours": 1, "sixes": 4, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 63, "name": "Priyansh Arya", "ipl_team": "PBKS", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 7, "fours": 0, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 106, "name": "Shreyas Iyer", "ipl_team": "PBKS", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 18, "fours": 0, "sixes": 2, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 22, "name": "Marco Jansen", "ipl_team": "PBKS", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 9, "fours": 0, "sixes": 1, "wkts": 1, "dots": 8, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 107, "name": "Yuzvendra Chahal", "ipl_team": "PBKS", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 2, "dots": 9, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 110, "name": "Xavier Bartlett", "ipl_team": "PBKS", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 11, "fours": 0, "sixes": 1, "wkts": 0, "dots": 9, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 69, "name": "Arshdeep Singh", "ipl_team": "PBKS", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 9, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 25, "name": "Shashank Singh", "ipl_team": "PBKS", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 4, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 10, "name": "Nehal Wadhera", "ipl_team": "PBKS", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 3, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 102, "name": "Marcus Stoinis", "ipl_team": "PBKS", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}]}, {"id": "match-5", "title": "LSG vs DC - Match 5", "date": "2026-04-01", "abandoned": false, "rows": [{"id": 70, "name": "Rishabh Pant", "ipl_team": "LSG", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 7, "fours": 1, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 26, "name": "Nicholas Pooran", "ipl_team": "LSG", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 8, "fours": 1, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 84, "name": "Aiden Markram", "ipl_team": "LSG", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 11, "fours": 1, "sixes": 1, "wkts": 0, "dots": 2, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 38, "name": "Mitchell Marsh", "ipl_team": "LSG", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 35, "fours": 2, "sixes": 3, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 111, "name": "Abdul Samad", "ipl_team": "LSG", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 36, "fours": 3, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 95, "name": "Mohsin Khan", "ipl_team": "LSG", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 15, "maidens": 1, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 39, "name": "Mohammed Shami", "ipl_team": "LSG", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 1, "fours": 0, "sixes": 0, "wkts": 1, "dots": 12, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 115, "name": "Shahbaz Ahmed", "ipl_team": "LSG", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 15, "fours": 1, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 27, "name": "Ayush Badoni", "ipl_team": "LSG", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 36, "name": "Pathum Nissanka", "ipl_team": "DC", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 1, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 112, "name": "David Miller", "ipl_team": "DC", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 80, "name": "Axar Patel", "ipl_team": "DC", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 9, "maidens": 0, "lbw_b_hw": 1, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 62, "name": "T Natarajan", "ipl_team": "DC", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 3, "dots": 8, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 108, "name": "Kuldeep Yadav", "ipl_team": "DC", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 2, "dots": 8, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 91, "name": "Lungi Ngidi", "ipl_team": "DC", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 3, "dots": 9, "maidens": 0, "lbw_b_hw": 1, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 5, "name": "Mukesh Kumar", "ipl_team": "DC", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 11, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 1, "stumpings": 0}, {"id": 66, "name": "Tristan Stubbs", "ipl_team": "DC", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 39, "fours": 3, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 116, "name": "KL Rahul", "ipl_team": "DC", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 24, "name": "Vipraj Nigam", "ipl_team": "DC", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 2, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}]}, {"id": "match-6", "title": "SRH vs KKR - Match 6", "date": "2026-04-02", "abandoned": false, "rows": [{"id": 93, "name": "Travis Head", "ipl_team": "SRH", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 46, "fours": 6, "sixes": 3, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 31, "name": "Ishan Kishan", "ipl_team": "SRH", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 14, "fours": 3, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 32, "name": "Heinrich Klaasen", "ipl_team": "SRH", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 52, "fours": 4, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 51, "name": "Abhishek Sharma", "ipl_team": "SRH", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 48, "fours": 4, "sixes": 4, "wkts": 0, "dots": 1, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 81, "name": "Aniket Verma", "ipl_team": "SRH", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 1, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 19, "name": "Ajinkya Rahane", "ipl_team": "KKR", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 8, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 76, "name": "Angkrish Raghuvanshi", "ipl_team": "KKR", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 52, "fours": 6, "sixes": 2, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 64, "name": "Finn Allen", "ipl_team": "KKR", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 28, "fours": 4, "sixes": 2, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 6, "name": "Sunil Narine", "ipl_team": "KKR", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 12, "fours": 0, "sixes": 2, "wkts": 0, "dots": 6, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 21, "name": "Vaibhav Arora", "ipl_team": "KKR", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 1, "fours": 0, "sixes": 0, "wkts": 2, "dots": 9, "maidens": 0, "lbw_b_hw": 1, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 46, "name": "Blessing Muzarabani", "ipl_team": "KKR", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 3, "dots": 7, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 98, "name": "Cameron Green", "ipl_team": "KKR", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 2, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 92, "name": "Rinku Singh", "ipl_team": "KKR", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 35, "fours": 4, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 113, "name": "Ramandeep Singh", "ipl_team": "KKR", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 10, "fours": 1, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 114, "name": "Varun Chakravarthy", "ipl_team": "KKR", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 1, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}]}, {"id": "match-7", "title": "CSK vs PBKS - Match 7", "date": "2026-04-03", "abandoned": false, "rows": [{"id": 20, "name": "Ayush Mhatre", "ipl_team": "CSK", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 73, "fours": 6, "sixes": 5, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 54, "name": "Ruturaj Gaikwad", "ipl_team": "CSK", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 28, "fours": 2, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 1, "stumpings": 0}, {"id": 50, "name": "Sarfaraz Khan", "ipl_team": "CSK", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 32, "fours": 6, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 1, "stumpings": 0}, {"id": 11, "name": "Sanju Samson", "ipl_team": "CSK", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 7, "fours": 1, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 109, "name": "Shivam Dube", "ipl_team": "CSK", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 45, "fours": 5, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 56, "name": "Khaleel Ahmed", "ipl_team": "CSK", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 9, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 79, "name": "Matt Henry", "ipl_team": "CSK", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 5, "fours": 1, "sixes": 0, "wkts": 2, "dots": 6, "maidens": 0, "lbw_b_hw": 1, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 83, "name": "Noor Ahmad", "ipl_team": "CSK", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 1, "fours": 0, "sixes": 0, "wkts": 0, "dots": 6, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 57, "name": "Prashant Veer", "ipl_team": "CSK", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 6, "fours": 1, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 18, "name": "Prabhsimran Singh", "ipl_team": "PBKS", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 43, "fours": 6, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 63, "name": "Priyansh Arya", "ipl_team": "PBKS", "fantasy_team": "Darshan", "playing": 1, "mom": 1, "runs": 39, "fours": 3, "sixes": 4, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 106, "name": "Shreyas Iyer", "ipl_team": "PBKS", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 50, "fours": 4, "sixes": 3, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 22, "name": "Marco Jansen", "ipl_team": "PBKS", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 11, "maidens": 0, "lbw_b_hw": 1, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 107, "name": "Yuzvendra Chahal", "ipl_team": "PBKS", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 4, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 110, "name": "Xavier Bartlett", "ipl_team": "PBKS", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 11, "fours": 0, "sixes": 1, "wkts": 1, "dots": 7, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 69, "name": "Arshdeep Singh", "ipl_team": "PBKS", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 9, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 25, "name": "Shashank Singh", "ipl_team": "PBKS", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 14, "fours": 2, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 102, "name": "Marcus Stoinis", "ipl_team": "PBKS", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 9, "fours": 2, "sixes": 0, "wkts": 0, "dots": 1, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 10, "name": "Nehal Wadhera", "ipl_team": "PBKS", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 10, "fours": 0, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}]}, {"id": "match-8", "title": "MI vs DC - Match 8", "date": "2026-04-04", "abandoned": false, "rows": [{"id": 2, "name": "Rohit Sharma", "ipl_team": "MI", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 35, "fours": 5, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 48, "name": "Suryakumar Yadav", "ipl_team": "MI", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 51, "fours": 3, "sixes": 2, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 23, "name": "Tilak Varma", "ipl_team": "MI", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 82, "name": "Hardik Pandya", "ipl_team": "MI", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 40, "name": "Jasprit Bumrah", "ipl_team": "MI", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 13, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 1, "stumpings": 0}, {"id": 53, "name": "Mitchell Santner", "ipl_team": "MI", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 18, "fours": 2, "sixes": 0, "wkts": 1, "dots": 8, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 68, "name": "Naman Dhir", "ipl_team": "MI", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 28, "fours": 2, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 99, "name": "Deepak Chahar", "ipl_team": "MI", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 10, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 77, "name": "Shardul Thakur", "ipl_team": "MI", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 3, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 36, "name": "Pathum Nissanka", "ipl_team": "DC", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 44, "fours": 6, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 116, "name": "KL Rahul", "ipl_team": "DC", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 1, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 80, "name": "Axar Patel", "ipl_team": "DC", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 8, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 62, "name": "T Natarajan", "ipl_team": "DC", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 4, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 108, "name": "Kuldeep Yadav", "ipl_team": "DC", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 4, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 91, "name": "Lungi Ngidi", "ipl_team": "DC", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 8, "maidens": 0, "lbw_b_hw": 1, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 5, "name": "Mukesh Kumar", "ipl_team": "DC", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 2, "dots": 10, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 66, "name": "Tristan Stubbs", "ipl_team": "DC", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 3, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 112, "name": "David Miller", "ipl_team": "DC", "fantasy_team": "Prabhu", "playing": 1, "mom": 0, "runs": 21, "fours": 4, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 24, "name": "Vipraj Nigam", "ipl_team": "DC", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 7, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}]}, {"id": "match-9", "title": "RR vs GT - Match 9", "date": "2026-04-04", "abandoned": false, "rows": [{"id": 4, "name": "Vaibhav Sooryavanshi", "ipl_team": "RR", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 31, "fours": 5, "sixes": 1, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 61, "name": "Yashasvi Jaiswal", "ipl_team": "RR", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 55, "fours": 6, "sixes": 3, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 3, "name": "Dhruv Jurel", "ipl_team": "RR", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 75, "fours": 5, "sixes": 5, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 1, "stumpings": 0}, {"id": 67, "name": "Riyan Parag", "ipl_team": "RR", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 8, "fours": 0, "sixes": 1, "wkts": 1, "dots": 3, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 35, "name": "Ravindra Jadeja", "ipl_team": "RR", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 7, "fours": 1, "sixes": 0, "wkts": 0, "dots": 1, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 1, "stumpings": 0}, {"id": 1, "name": "Ravi Bishnoi", "ipl_team": "RR", "fantasy_team": "RK", "playing": 1, "mom": 1, "runs": 0, "fours": 0, "sixes": 0, "wkts": 4, "dots": 9, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 9, "name": "Tushar Deshpande", "ipl_team": "RR", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 7, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 96, "name": "Shimron Hetmyer", "ipl_team": "RR", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 18, "fours": 1, "sixes": 2, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 97, "name": "Sandeep Sharma", "ipl_team": "RR", "fantasy_team": "Ragu", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 0, "dots": 4, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 78, "name": "Jofra Archer", "ipl_team": "RR", "fantasy_team": "Dots", "playing": 1, "mom": 0, "runs": 1, "fours": 0, "sixes": 0, "wkts": 0, "dots": 10, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 17, "name": "Sai Sudharsan", "ipl_team": "GT", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 73, "fours": 9, "sixes": 3, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 49, "name": "Jos Buttler", "ipl_team": "GT", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 26, "fours": 5, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 65, "name": "Rashid Khan", "ipl_team": "GT", "fantasy_team": "Darshan", "playing": 1, "mom": 0, "runs": 24, "fours": 3, "sixes": 0, "wkts": 1, "dots": 4, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 33, "name": "Kagiso Rabada", "ipl_team": "GT", "fantasy_team": "JD", "playing": 1, "mom": 0, "runs": 23, "fours": 1, "sixes": 2, "wkts": 2, "dots": 11, "maidens": 0, "lbw_b_hw": 1, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 16, "name": "Prasidh Krishna", "ipl_team": "GT", "fantasy_team": "Rijo", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 9, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 52, "name": "Washington Sundar", "ipl_team": "GT", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 4, "fours": 1, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 0, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 55, "name": "Glenn Phillips", "ipl_team": "GT", "fantasy_team": "Prakash", "playing": 1, "mom": 0, "runs": 3, "fours": 0, "sixes": 0, "wkts": 0, "dots": 0, "maidens": 0, "lbw_b_hw": 0, "catches": 2, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}, {"id": 7, "name": "Mohammed Siraj", "ipl_team": "GT", "fantasy_team": "RK", "playing": 1, "mom": 0, "runs": 0, "fours": 0, "sixes": 0, "wkts": 1, "dots": 11, "maidens": 0, "lbw_b_hw": 0, "catches": 1, "ro_direct": 0, "ro_indirect": 0, "stumpings": 0}]}];
 
-// --- Scoring ---
-function calcPoints(stats) {
-  if (!stats) return 0;
-  let pts = 0;
-  if (stats.playing) pts += 5;
-  if (stats.mom)     pts += 30;
-  const b = stats.batting || {};
-  const runs = b.runs || 0; const fours = b.fours || 0; const sixes = b.sixes || 0;
-  pts += runs + fours + (sixes * 2);
-  if (runs >= 30) pts += 5; if (runs >= 50) pts += 10; if (runs >= 100) pts += 10;
-  const w = stats.bowling || {};
-  const wkts = w.wickets || w.wkts || 0; const dots = w.dots || 0; const maidens = w.maidens || 0; const lbwb = w.lbw_b_hw || 0;
-  pts += dots + (wkts * 20) + (maidens * 20) + (lbwb * 5);
-  if (wkts >= 2) pts += 5; if (wkts >= 3) pts += 10; if (wkts >= 5) pts += 10;
-  const f = stats.fielding || {};
-  pts += (f.catches || 0) * 5 + (f.ro_direct || 0) * 10 + (f.ro_indirect || 0) * 5 + (f.stumpings || 0) * 10;
-  return pts;
+// ============================================================
+// SCORING ENGINE
+// ============================================================
+function calcPoints(r) {
+  if (!r) return 0;
+  let p = 0;
+  if (r.playing) p += 5;
+  if (r.mom)     p += 30;
+  const runs = r.runs||0, fours = r.fours||0, sixes = r.sixes||0;
+  p += runs + fours + sixes*2;
+  if (runs>=30) p+=5; if (runs>=50) p+=10; if (runs>=100) p+=10;
+  const wkts = r.wkts||0, dots = r.dots||0, maidens = r.maidens||0, lbwb = r.lbw_b_hw||0;
+  p += wkts*20 + dots + maidens*20 + lbwb*5;
+  if (wkts>=2) p+=5; if (wkts>=3) p+=10; if (wkts>=5) p+=10;
+  p += (r.catches||0)*5 + (r.ro_direct||0)*10 + (r.ro_indirect||0)*5 + (r.stumpings||0)*10;
+  return p;
 }
 
-// --- CSV parser ---
-function parseMatchCSV(content) {
-  const meta = { title: "", date: "", abandoned: false };
-  const rows = [];
-  for (const raw of content.split("\n")) {
-    const line = raw.trim();
-    if (!line) continue;
-    if (line.startsWith("#")) {
-      if (line.toLowerCase().includes("abandoned")) meta.abandoned = true;
-      else if (!meta.title) meta.title = line.slice(1).trim();
-      else if (!meta.date)  meta.date  = line.slice(1).trim();
-      continue;
+// ============================================================
+// BUILD MATCH RECORDS FROM EMBEDDED DATA
+// ============================================================
+function getMatches() {
+  return MATCH_DATA.map(m => {
+    const players = {};
+    for (const r of m.rows) {
+      players[r.id] = {
+        id: r.id, name: r.name, iplTeam: r.ipl_team, fantasyTeam: r.fantasy_team,
+        stats: r,
+        points: m.abandoned ? 0 : calcPoints(r),
+      };
     }
-    const c = line.split(",").map(s => s.trim());
-    if (c.length < 17 || isNaN(parseInt(c[0]))) continue;
-    rows.push({
-      id: parseInt(c[0]), name: c[1], ipl_team: c[2], fantasy_team: c[3],
-      playing: +c[4]||0, mom: +c[5]||0, runs: +c[6]||0, fours: +c[7]||0,
-      sixes: +c[8]||0, wkts: +c[9]||0, dots: +c[10]||0, maidens: +c[11]||0,
-      lbw_b_hw: +c[12]||0, catches: +c[13]||0, ro_direct: +c[14]||0,
-      ro_indirect: +c[15]||0, stumpings: +c[16]||0,
-    });
-  }
-  return { meta, rows };
+    return { id: m.id, title: m.title, date: m.date, abandoned: m.abandoned, players };
+  });
 }
 
-// --- Load CSV matches from disk ---
-function loadAllMatches() {
-  const dirs = [
-    path.join(__dirname, "../../data/matches"),
-    path.join(process.cwd(), "data/matches"),
-    "/var/task/data/matches",
-  ];
-  let dir = null;
-  for (const d of dirs) { try { if (fs.existsSync(d)) { dir = d; break; } } catch(_) {} }
-  if (!dir) return [];
-  let files;
-  try { files = fs.readdirSync(dir).filter(f => f.endsWith(".csv")).sort((a,b) => parseInt((a.match(/\d+/)||[0])[0]) - parseInt((b.match(/\d+/)||[0])[0])); }
-  catch(_) { return []; }
-  const matches = [];
-  for (const file of files) {
-    try {
-      const { meta, rows } = parseMatchCSV(fs.readFileSync(path.join(dir, file), "utf8"));
-      const playerMap = {};
-      for (const r of rows) {
-        const stats = {
-          playing: r.playing, mom: r.mom,
-          batting: { runs: r.runs, fours: r.fours, sixes: r.sixes },
-          bowling: { wickets: r.wkts, dots: r.dots, maidens: r.maidens, lbw_b_hw: r.lbw_b_hw },
-          fielding: { catches: r.catches, ro_direct: r.ro_direct, ro_indirect: r.ro_indirect, stumpings: r.stumpings },
-        };
-        playerMap[r.id] = { id: r.id, name: r.name, iplTeam: r.ipl_team, fantasyTeam: r.fantasy_team, stats, points: meta.abandoned ? 0 : calcPoints(stats) };
-      }
-      matches.push({ id: file.replace(".csv",""), title: meta.title, date: meta.date, abandoned: meta.abandoned, players: playerMap });
-    } catch(_) {}
-  }
-  return matches;
-}
-
-// --- Build standings ---
-function buildStandings(players, matches) {
+// ============================================================
+// STANDINGS
+// ============================================================
+function buildStandings(matches) {
   const tm = {};
-  for (const p of players) {
+  for (const p of PLAYERS) {
     if (!tm[p.fantasyTeam]) tm[p.fantasyTeam] = { team: p.fantasyTeam, total: 0, players: {} };
-    tm[p.fantasyTeam].players[p.id] = { id: p.id, name: p.name, iplTeam: p.iplTeam, category: p.category, foreign: p.foreign, points: 0, matchCount: 0, matchDetails: [] };
+    tm[p.fantasyTeam].players[p.id] = {
+      id: p.id, name: p.name, iplTeam: p.iplTeam,
+      category: p.category, foreign: p.foreign,
+      points: 0, matchCount: 0, matchDetails: [],
+    };
   }
   for (const m of matches) {
     for (const [pid, pd] of Object.entries(m.players)) {
       const id = parseInt(pid);
-      const pl = players.find(p => p.id === id);
+      const pl = PLAYERS.find(p => p.id === id);
       if (!pl) continue;
       const ft = pd.fantasyTeam || pl.fantasyTeam;
       if (!tm[ft] || !tm[ft].players[id]) continue;
-      tm[ft].players[id].points += pd.points;
+      tm[ft].players[id].points     += pd.points;
       tm[ft].players[id].matchCount += 1;
-      tm[ft].players[id].matchDetails.push({ matchId: m.id, matchTitle: m.title, matchDate: m.date, points: pd.points });
+      tm[ft].players[id].matchDetails.push({
+        matchId: m.id, matchTitle: m.title, matchDate: m.date, points: pd.points,
+        stats: pd.stats,
+      });
       tm[ft].total += pd.points;
     }
   }
   return Object.values(tm)
-    .map(t => ({ ...t, players: Object.values(t.players).sort((a,b) => b.points - a.points) }))
-    .sort((a,b) => b.total - a.total)
+    .map(t => ({ ...t, players: Object.values(t.players).sort((a,b) => b.points-a.points) }))
+    .sort((a,b) => b.total-a.total)
     .map((t,i) => ({ ...t, rank: i+1 }));
 }
 
-// --- IPL detector ---
+// ============================================================
+// LIVE SCORECARD -> FANTASY POINTS
+// ============================================================
 function isIPL(m) {
   const txt = [m.name||"", m.series||"", m.matchType||""].join(" ").toLowerCase();
-  return m.matchType === "t20" && (txt.includes("indian premier league") || txt.includes("ipl 2026") || txt.includes(" ipl ") || txt.startsWith("ipl"));
+  return m.matchType==="t20" && (
+    txt.includes("indian premier league") ||
+    txt.includes("ipl 2026") ||
+    txt.includes(" ipl ") ||
+    txt.startsWith("ipl")
+  );
 }
 
-// --- Scorecard -> fantasy points ---
-function mapToFantasy(scorecard, players) {
-  const norm = s => (s||"").toLowerCase().replace(/[^a-z ]/g,"").replace(/\s+/g," ").trim();
+function normName(s) {
+  return (s||"").toLowerCase().replace(/[^a-z ]/g,"").replace(/\s+/g," ").trim();
+}
+
+function buildLookup() {
   const lk = new Map();
-  for (const p of players) {
-    lk.set(norm(p.name), p);
-    const pts = norm(p.name).split(" ");
-    if (pts.length > 1 && !lk.has(pts[pts.length-1])) lk.set(pts[pts.length-1], p);
+  for (const p of PLAYERS) {
+    const n = normName(p.name);
+    lk.set(n, p);
+    const parts = n.split(" ");
+    if (parts.length > 1) {
+      if (!lk.has(parts[parts.length-1])) lk.set(parts[parts.length-1], p);
+      if (parts.length > 2) {
+        const fl = parts[0]+" "+parts[parts.length-1];
+        if (!lk.has(fl)) lk.set(fl, p);
+      }
+    }
   }
-  const find = name => {
-    const n = norm(name); if (!n) return null;
-    if (lk.has(n)) return lk.get(n);
-    for (const [k,p] of lk) { if (n.includes(k) || k.includes(n)) return p; }
-    return null;
-  };
+  return lk;
+}
+
+function findPlayer(lk, name) {
+  const n = normName(name);
+  if (!n) return null;
+  if (lk.has(n)) return lk.get(n);
+  for (const [k,p] of lk) { if (n.includes(k) || k.includes(n)) return p; }
+  return null;
+}
+
+function mapToFantasy(scorecard) {
+  const lk  = buildLookup();
   const acc = {};
   const add = (rawName, pts) => {
     if (!rawName || !pts) return;
-    const n = norm(rawName);
-    if (!acc[n]) acc[n] = { pts: 0, player: find(rawName) };
+    const n = normName(rawName);
+    if (!acc[n]) acc[n] = { pts: 0, player: findPlayer(lk, rawName) };
     acc[n].pts += pts;
   };
   for (const inn of (scorecard.scorecard||[])) {
     for (const b of (inn.batting||[])) {
-      const name = b["batsman name"] || (b.batsman&&b.batsman.name) || "";
-      add(name, 5); // playing
+      const nm = b["batsman name"]||(b.batsman&&b.batsman.name)||"";
+      add(nm, 5);
       const runs=+(b.r||b.runs||0), fours=+(b["4s"]||b.fours||0), sixes=+(b["6s"]||b.sixes||0);
-      let p = runs + fours + sixes*2;
-      if (runs>=30) p+=5; if (runs>=50) p+=10; if (runs>=100) p+=10;
-      add(name, p);
+      let pts = runs + fours + sixes*2;
+      if (runs>=30) pts+=5; if (runs>=50) pts+=10; if (runs>=100) pts+=10;
+      add(nm, pts);
     }
     for (const bw of (inn.bowling||[])) {
-      const name = bw["bowler name"] || (bw.bowler&&bw.bowler.name) || "";
-      add(name, 5); // playing
+      const nm = bw["bowler name"]||(bw.bowler&&bw.bowler.name)||"";
+      add(nm, 5);
       const wk=+(bw.w||bw.wickets||0), mai=+(bw.m||bw.maidens||0);
-      let p = wk*20 + mai*20;
-      if (wk>=2) p+=5; if (wk>=3) p+=10; if (wk>=5) p+=10;
-      add(name, p);
+      let pts = wk*20 + mai*20;
+      if (wk>=2) pts+=5; if (wk>=3) pts+=10; if (wk>=5) pts+=10;
+      add(nm, pts);
     }
   }
-  for (const m of ((scorecard.matchHeader&&scorecard.matchHeader.playersOfTheMatch)||scorecard.playersOfTheMatch||[])) {
-    add(m.name||m||"", 30);
-  }
+  const momList = (scorecard.matchHeader&&scorecard.matchHeader.playersOfTheMatch)||scorecard.playersOfTheMatch||[];
+  for (const m of momList) add(m.name||m||"", 30);
+
   const result = {};
   for (const [, { pts, player }] of Object.entries(acc)) {
     if (!player) continue;
@@ -169,31 +160,47 @@ function mapToFantasy(scorecard, players) {
     result[ft].total += pts;
     result[ft].players.push({ name: player.name, iplTeam: player.iplTeam, pts });
   }
-  for (const ft of Object.keys(result)) result[ft].players.sort((a,b) => b.pts - a.pts);
+  for (const ft of Object.keys(result)) result[ft].players.sort((a,b) => b.pts-a.pts);
   return result;
 }
 
-// --- HANDLER ---
+// ============================================================
+// HANDLER
+// ============================================================
 exports.handler = async (event) => {
   const H = { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" };
-  const ok  = b => ({ statusCode: 200, headers: H, body: JSON.stringify(b) });
+  const ok   = b => ({ statusCode: 200, headers: H, body: JSON.stringify(b) });
   const e404 = m => ({ statusCode: 404, headers: H, body: JSON.stringify({ error: m }) });
 
   try {
-    const route   = (event.path||"").replace("/.netlify/functions/api","").replace("/api","").split("?")[0] || "/";
-    const players = PLAYERS;
-    const config  = CONFIG;
-    const matches = loadAllMatches();
+    const route = (event.path||"")
+      .replace("/.netlify/functions/api","")
+      .replace("/api","")
+      .split("?")[0] || "/";
 
-    if (route === "/config" || route === "/" || route === "") return ok({ name: config.name, season: config.season });
-    if (route === "/players") return ok(players);
-    if (route === "/standings") return ok(buildStandings(players, matches));
-    if (route === "/matches") return ok(matches.map(m => ({ id:m.id, title:m.title, date:m.date, abandoned:m.abandoned })));
+    const matches = getMatches();
 
+    // /config
+    if (route==="/" || route==="" || route==="/config") {
+      return ok({ name: "IPL 2026 Fantasy League", season: "2026" });
+    }
+
+    // /players
+    if (route==="/players") return ok(PLAYERS);
+
+    // /standings
+    if (route==="/standings") return ok(buildStandings(matches));
+
+    // /matches
+    if (route==="/matches") {
+      return ok(matches.map(m => ({ id:m.id, title:m.title, date:m.date, abandoned:m.abandoned })));
+    }
+
+    // /matches/:id/detail
     const mdM = route.match(/^\/matches\/(.+)\/detail$/);
     if (mdM) {
-      const match = matches.find(m => m.id === mdM[1]);
-      if (!match) return e404("Match not found");
+      const match = matches.find(m => m.id===mdM[1]);
+      if (!match) return e404("Match not found: "+mdM[1]);
       const bd = {};
       for (const [,pd] of Object.entries(match.players)) {
         if (!bd[pd.fantasyTeam]) bd[pd.fantasyTeam] = { total:0, players:[] };
@@ -204,22 +211,28 @@ exports.handler = async (event) => {
       return ok({ match:{ id:match.id, title:match.title, date:match.date, abandoned:match.abandoned }, teamBreakdown:bd });
     }
 
-    if (route === "/players/details") {
-      const st = buildStandings(players, matches);
+    // /players/details
+    if (route==="/players/details") {
+      const st = buildStandings(matches);
       const details = [];
       for (const team of st) {
         for (const p of team.players) {
-          const pl = players.find(x => x.id === p.id);
-          details.push({ ...p, category: pl?pl.category:"", foreign: pl?pl.foreign:"", fantasyTeam:team.team, total:p.points,
+          const pl = PLAYERS.find(x => x.id===p.id);
+          details.push({
+            ...p, category:pl?pl.category:"", foreign:pl?pl.foreign:"",
+            fantasyTeam:team.team, total:p.points,
             matches: p.matchDetails.map(md => {
-              const mx = matches.find(m => m.id===md.matchId);
-              const mp = mx ? mx.players[p.id] : null;
-              return { matchId:md.matchId, matchTitle:md.matchTitle||"", matchDate:md.matchDate||"", total:md.points,
-                playing: mp&&mp.stats&&mp.stats.playing?5:0,
-                batting: mp?calcPoints({batting:mp.stats.batting}):0,
-                bowling: mp?calcPoints({bowling:mp.stats.bowling}):0,
-                fielding:mp?calcPoints({fielding:mp.stats.fielding}):0,
-                mom: mp&&mp.stats&&mp.stats.mom?30:0 };
+              const s = md.stats||{};
+              const runs=s.runs||0, wkts=s.wkts||0;
+              let bat = runs+(s.fours||0)+(s.sixes||0)*2;
+              if(runs>=30) bat+=5; if(runs>=50) bat+=10; if(runs>=100) bat+=10;
+              let bowl = wkts*20+(s.dots||0)+(s.maidens||0)*20+(s.lbw_b_hw||0)*5;
+              if(wkts>=2) bowl+=5; if(wkts>=3) bowl+=10; if(wkts>=5) bowl+=10;
+              const field = (s.catches||0)*5+(s.ro_direct||0)*10+(s.ro_indirect||0)*5+(s.stumpings||0)*10;
+              return {
+                matchId:md.matchId, matchTitle:md.matchTitle||"", matchDate:md.matchDate||"",
+                total:md.points, playing:s.playing?5:0, batting:bat, bowling:bowl, fielding:field, mom:s.mom?30:0,
+              };
             }),
           });
         }
@@ -228,65 +241,90 @@ exports.handler = async (event) => {
       return ok(details);
     }
 
-    if (route === "/dashboard") {
-      const st = buildStandings(players, matches);
+    // /dashboard
+    if (route==="/dashboard") {
+      const st = buildStandings(matches);
       const totals = {};
       for (const m of matches) {
         for (const [pid,pd] of Object.entries(m.players)) {
-          if (!totals[pid]) { const pl=players.find(p=>p.id===parseInt(pid)); totals[pid]={name:pd.name,fantasyTeam:pd.fantasyTeam,iplTeam:pd.iplTeam,category:pl?pl.category:"",total:0,matchCount:0}; }
-          totals[pid].total+=pd.points; totals[pid].matchCount+=1;
+          if (!totals[pid]) {
+            const pl = PLAYERS.find(p => p.id===parseInt(pid));
+            totals[pid] = { name:pd.name, fantasyTeam:pd.fantasyTeam, iplTeam:pd.iplTeam, category:pl?pl.category:"", total:0, matchCount:0 };
+          }
+          totals[pid].total += pd.points;
+          totals[pid].matchCount += 1;
         }
       }
-      return ok({ teamRankings:st.map(t=>({team:t.team,total:t.total,rank:t.rank})), topPlayers:Object.values(totals).sort((a,b)=>b.total-a.total).slice(0,10), totalMatches:matches.length });
+      return ok({
+        teamRankings: st.map(t => ({ team:t.team, total:t.total, rank:t.rank })),
+        topPlayers: Object.values(totals).sort((a,b) => b.total-a.total).slice(0,10),
+        totalMatches: matches.length,
+      });
     }
 
-    if (route === "/stats/top-scores") {
+    // /stats/top-scores
+    if (route==="/stats/top-scores") {
       const wc={}, ml=[];
       for (const m of [...matches].reverse()) {
         const tt={};
         for (const [,pd] of Object.entries(m.players)) tt[pd.fantasyTeam]=(tt[pd.fantasyTeam]||0)+pd.points;
-        const sorted=Object.entries(tt).sort((a,b)=>b[1]-a[1]);
-        const winner=sorted[0]?sorted[0][0]:null; const topScore=sorted[0]?sorted[0][1]:0;
+        const sorted = Object.entries(tt).sort((a,b)=>b[1]-a[1]);
+        const winner = sorted[0]?sorted[0][0]:null;
         if (winner) wc[winner]=(wc[winner]||0)+1;
-        ml.push({id:m.id,title:m.title,date:m.date,winner,topScore,teamTotals:tt});
+        ml.push({ id:m.id, title:m.title, date:m.date, winner, topScore:sorted[0]?sorted[0][1]:0, teamTotals:tt });
       }
-      return ok({ leaderboard:Object.entries(wc).map(([team,wins])=>({team,wins})).sort((a,b)=>b.wins-a.wins), matches:ml });
+      return ok({
+        leaderboard: Object.entries(wc).map(([team,wins])=>({team,wins})).sort((a,b)=>b.wins-a.wins),
+        matches: ml,
+      });
     }
 
-    if (route === "/ipl-status") {
-      const apiKey = process.env.CRICKET_API_KEY || config.cricketApiKey;
-      if (!apiKey) return ok({ state:"error", message:"Set CRICKET_API_KEY in Netlify environment variables" });
-      const fetch = require("node-fetch");
-      const now   = new Date();
-      const res   = await fetch(`https://api.cricapi.com/v1/currentMatches?apikey=${apiKey}&offset=0`);
-      const data  = await res.json();
-      const all   = data.data || [];
+    // /ipl-status
+    if (route==="/ipl-status") {
+      const apiKey = process.env.CRICKET_API_KEY || "75c14eae-82de-4db9-959a-e83448b5d704";
+      const fetch  = require("node-fetch");
+      const now    = new Date();
+      const res    = await fetch("https://api.cricapi.com/v1/currentMatches?apikey="+apiKey+"&offset=0");
+      const data   = await res.json();
+      const all    = data.data || [];
       const liveIPL     = all.filter(m => isIPL(m) && m.matchStarted && !m.matchEnded);
       const upcomingIPL = all.filter(m => isIPL(m) && !m.matchStarted);
+
       if (liveIPL.length > 0) {
-        const match = liveIPL[0];
-        const scRes = await fetch(`https://api.cricapi.com/v1/match_scorecard?apikey=${apiKey}&id=${match.id}`);
-        const scData= await scRes.json();
-        return ok({ state:"live", fetchedAt:now.toISOString(), nextRefreshAt:new Date(now.getTime()+10*60*1000).toISOString(),
-          liveMatch:{ id:match.id, name:match.name, status:match.status, score:match.score||[], teams:match.teams||[], venue:match.venue||"" },
-          fantasyPoints: scData.data ? mapToFantasy(scData.data, players) : {} });
+        const match  = liveIPL[0];
+        const scRes  = await fetch("https://api.cricapi.com/v1/match_scorecard?apikey="+apiKey+"&id="+match.id);
+        const scData = await scRes.json();
+        return ok({
+          state: "live",
+          fetchedAt: now.toISOString(),
+          nextRefreshAt: new Date(now.getTime()+10*60*1000).toISOString(),
+          liveMatch: { id:match.id, name:match.name, status:match.status, score:match.score||[], teams:match.teams||[], venue:match.venue||"" },
+          fantasyPoints: scData.data ? mapToFantasy(scData.data) : {},
+        });
       }
-      let nextMatch = upcomingIPL.filter(m=>m.dateTimeGMT).sort((a,b)=>new Date(a.dateTimeGMT)-new Date(b.dateTimeGMT))[0] || null;
+
+      let nextMatch = upcomingIPL.filter(m=>m.dateTimeGMT).sort((a,b)=>new Date(a.dateTimeGMT)-new Date(b.dateTimeGMT))[0]||null;
       if (!nextMatch) {
         try {
-          const fRes = await fetch(`https://api.cricapi.com/v1/matches?apikey=${apiKey}&offset=0`);
-          const fData= await fRes.json();
-          nextMatch = (fData.data||[]).filter(m=>isIPL(m)&&!m.matchStarted&&m.dateTimeGMT&&new Date(m.dateTimeGMT)>now).sort((a,b)=>new Date(a.dateTimeGMT)-new Date(b.dateTimeGMT))[0]||null;
-        } catch(_){}
+          const fRes  = await fetch("https://api.cricapi.com/v1/matches?apikey="+apiKey+"&offset=0");
+          const fData = await fRes.json();
+          nextMatch = (fData.data||[])
+            .filter(m => isIPL(m) && !m.matchStarted && m.dateTimeGMT && new Date(m.dateTimeGMT)>now)
+            .sort((a,b) => new Date(a.dateTimeGMT)-new Date(b.dateTimeGMT))[0]||null;
+        } catch(_) {}
       }
-      return ok({ state:nextMatch?"upcoming":"idle", fetchedAt:now.toISOString(), nextRefreshAt:new Date(now.getTime()+30*60*1000).toISOString(),
-        nextMatch: nextMatch?{id:nextMatch.id,name:nextMatch.name,dateTimeGMT:nextMatch.dateTimeGMT,teams:nextMatch.teams||[],venue:nextMatch.venue||"",series:nextMatch.series||""}:null });
+      return ok({
+        state: nextMatch?"upcoming":"idle",
+        fetchedAt: now.toISOString(),
+        nextRefreshAt: new Date(now.getTime()+30*60*1000).toISOString(),
+        nextMatch: nextMatch ? { id:nextMatch.id, name:nextMatch.name, dateTimeGMT:nextMatch.dateTimeGMT, teams:nextMatch.teams||[], venue:nextMatch.venue||"", series:nextMatch.series||"" } : null,
+      });
     }
 
-    return e404("Unknown route: " + route);
+    return e404("Unknown route: "+route);
 
   } catch(e) {
-    console.error("[api] CRASH:", e.message, e.stack);
-    return { statusCode:500, headers:H, body:JSON.stringify({ error:e.message }) };
+    console.error("[api] ERROR:", e.message, e.stack);
+    return { statusCode:500, headers:H, body:JSON.stringify({ error:e.message, stack:e.stack }) };
   }
 };
